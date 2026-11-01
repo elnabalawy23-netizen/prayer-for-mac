@@ -19,9 +19,9 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.0</string>
+	<string>1.0.1</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>2</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.lifestyle</string>
 	<key>LSMinimumSystemVersion</key>
@@ -32,11 +32,11 @@
 	<true/>
 	<key>NSHumanReadableCopyright</key>
 	<string>© 2026 Omar El-Nabalawy</string>
-	<key>NSPrincipalClass</key>
-	<string>NSApplication</string>
 	<key>NSLocationUsageDescription</key>
 	<string>Prayer uses your location to calculate accurate prayer times for your city.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Prayer uses your location to calculate accurate prayer times for your city.</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
 </dict>
 </plist>
