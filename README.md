@@ -55,6 +55,14 @@ To ship a new version: bump `CFBundleShortVersionString` in `Packaging/Info.plis
 
 macOS ties the Location grant to the app's code signature. An ad-hoc signature changes with every build, so every update would look like a brand-new app and ask again. `make cert` creates a self-signed code-signing certificate in your login keychain (backed up in `~/.prayer-signing/`). Every build signed with it has the same designated requirement, so macOS keeps trusting updates. It is not an Apple Developer ID, which is why the installer clears the quarantine flag instead of relying on Gatekeeper. To sign from a second Mac, copy `~/.prayer-signing/` there and run `make cert`; it imports the saved certificate instead of creating a new one.
 
+## Testing the updater
+
+```bash
+PRAYER_UPDATE_CHECK_DELAY=2 /Applications/Prayer.app/Contents/MacOS/Prayer   # checks GitHub 2 s after launch, ignoring the daily gate
+```
+
+Publish a higher version first; the installed copy downloads it, verifies the signature, swaps itself and relaunches. Only on a throwaway copy: `PRAYER_FAKE_VERSION=0.9.0` makes the app believe it is older than the latest release.
+
 ## Accuracy
 
 Times come from Adhan's astronomical algorithm with the official parameters of each authority, rounded to the minute, in the selected city's time zone. Checked against the Aladhan API for Riyadh (Umm al-Qura) and Cairo (Egyptian Authority): identical, with at most a one-minute rounding difference.
