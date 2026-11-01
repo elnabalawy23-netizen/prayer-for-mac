@@ -70,9 +70,8 @@ private struct SegmentView: View {
                             .font(app.display(10.5, weight: isNext ? .bold : .regular))
                     } else {
                         Text(app.strings.prayer(segment.start.prayer))
-                            .font(.mono(8.5, weight: isNext ? .semibold : .medium))
-                            .tracking(1.2)
-                            .textCase(.uppercase)
+                            .font(.mono(9, weight: isNext ? .semibold : .medium))
+                            .tracking(0.8)
                     }
                 }
                 .foregroundStyle(isNext ? palette.accent : .white)

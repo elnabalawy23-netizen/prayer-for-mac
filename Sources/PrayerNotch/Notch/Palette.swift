@@ -58,7 +58,7 @@ extension Font {
     }
 }
 
-/// Small caption: uppercase mono with wide tracking in English (like "7 STEPS · 14 MINS"),
+/// Small caption: mono with light tracking in English (Title Case, never all caps),
 /// Almarai without tracking in Arabic so the letters stay connected.
 struct CaptionStyle: ViewModifier {
     @EnvironmentObject var app: AppState
@@ -73,8 +73,7 @@ struct CaptionStyle: ViewModifier {
         } else {
             content
                 .font(.mono(size))
-                .tracking(1.5)
-                .textCase(.uppercase)
+                .tracking(1.2)
                 .foregroundStyle(.white.opacity(opacity))
         }
     }
@@ -87,7 +86,7 @@ struct PillLabelStyle: ViewModifier {
         if app.isArabic {
             content.font(app.display(11.5, weight: .bold))
         } else {
-            content.font(.mono(10, weight: .semibold)).tracking(1.4).textCase(.uppercase)
+            content.font(.mono(10, weight: .semibold)).tracking(1.2)
         }
     }
 }
