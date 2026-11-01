@@ -13,15 +13,15 @@ struct Palette: Equatable {
               blue: Double(v & 0xFF) / 255)
     }
 
-    /// Keyed by the prayer we are counting down to.
+    /// Keyed by the prayer we are counting down to: each prayer gets its own colour against the black.
     static func forNext(_ prayer: Prayer) -> Palette {
         switch prayer {
-        case .fajr:    return Palette(glow: hex(0x33388F), deep: hex(0x0F1030), accent: hex(0xA9B0FF)) // night → dawn
-        case .sunrise: return Palette(glow: hex(0xD98B4A), deep: hex(0x4A2510), accent: hex(0xFFC79A))
-        case .dhuhr:   return Palette(glow: hex(0xD9A23A), deep: hex(0x4A3310), accent: hex(0xFFD98A)) // morning sun
-        case .asr:     return Palette(glow: hex(0xD8772E), deep: hex(0x4C2410), accent: hex(0xFFBE8C)) // afternoon
-        case .maghrib: return Palette(glow: hex(0xB8471B), deep: hex(0x4A1A0A), accent: hex(0xFF9A66)) // burnt sienna
-        case .isha:    return Palette(glow: hex(0x8A2F3C), deep: hex(0x2A0E14), accent: hex(0xFF8FA0)) // dusk
+        case .fajr:    return Palette(glow: hex(0x2F4BB8), deep: hex(0x0E1440), accent: hex(0xA9BDFF)) // night → dawn: indigo blue
+        case .sunrise: return Palette(glow: hex(0xD98B4A), deep: hex(0x4A2510), accent: hex(0xFFC79A)) // (not used as "next")
+        case .dhuhr:   return Palette(glow: hex(0xD6B23A), deep: hex(0x4A3A0E), accent: hex(0xFFE38A)) // morning: gold
+        case .asr:     return Palette(glow: hex(0xE0802A), deep: hex(0x4C2A0C), accent: hex(0xFFC08A)) // afternoon: orange
+        case .maghrib: return Palette(glow: hex(0xB83A1B), deep: hex(0x4A150A), accent: hex(0xFF9A66)) // sunset: burnt sienna
+        case .isha:    return Palette(glow: hex(0x7A2E6E), deep: hex(0x26102C), accent: hex(0xF0A0E8)) // dusk: plum
         }
     }
 

@@ -115,10 +115,11 @@ private struct WingsRow: View {
 
     @ViewBuilder private var leading: some View {
         HStack(spacing: 7) {
-            Circle()
-                .fill(palette.accent)
-                .frame(width: 5, height: 5)
-                .shadow(color: palette.accent.opacity(0.9), radius: 4)
+            Image(systemName: app.snapshot?.next.prayer.symbolName ?? "location")
+                .font(.system(size: 11.5, weight: .regular))
+                .foregroundStyle(palette.accent)
+                .shadow(color: palette.accent.opacity(0.7), radius: 3)
+                .frame(width: 16, height: 16)
             if let s = app.snapshot {
                 if expanded {
                     Text(app.strings.nextPrayer).caption(9, opacity: 0.5)

@@ -6,6 +6,7 @@ A macOS app that turns the MacBook notch into a prayer-times island: the next pr
 
 <p align="center"><img src="docs/notch-expanded.png" width="620" alt="Prayer notch panel, expanded"></p>
 <p align="center"><img src="docs/notch-collapsed.png" width="440" alt="Prayer notch strip, collapsed"></p>
+<p align="center"><img src="docs/notch-palettes.png" width="500" alt="One glow per prayer"></p>
 
 ## Install on any Mac
 
@@ -21,9 +22,9 @@ First launch asks for Location access so it can pick your city; you can instead 
 
 ## Features
 
-- Notch strip: next prayer with a glowing dot on the left, `HH:MM` countdown on the right; each wing sized to its text and centered, nothing else outside the notch
+- Notch strip: the next prayer with its icon on the left, `HH:MM` countdown on the right; each wing sized to its text and centered, nothing else outside the notch
 - Hover panel: big prayer name, time, "in 1h 39min", city · method · date, and a six-segment timeline (Fajr → Sunrise → Dhuhr → Asr → Maghrib → Isha → Fajr) with an icon per prayer and a live fill
-- Warm glow that follows the time of day: indigo before Fajr, amber at Dhuhr, burnt sienna at Maghrib, dusk red before Isha
+- A different glow for every prayer: indigo before Fajr, gold before Dhuhr, orange before Asr, burnt sienna before Maghrib, plum before Isha
 - Location: automatic (CoreLocation) or any city by name (Apple Maps search), with the city's own time zone and its Arabic/English name
 - Calculation method and Asr madhab chosen per country, both overridable; 12/24-hour; English UI, with Arabic (set in Almarai) as an option
 - Menu-bar fallback on Macs without a notch; the icon is hidden on notch Macs unless you turn it on
@@ -44,6 +45,7 @@ make run        # build + launch from build/
 make install    # build + copy to /Applications + launch
 make release    # build + zip + publish a GitHub release for the version in Packaging/Info.plist
 make render     # renders the notch UI (Arabic + English) to build/render/ for design review
+                # PRAYER_RENDER_AT="02:30,08:00,13:00,16:00,18:00" previews every prayer's glow in one image
 make dev        # swift run, no bundle, for quick iteration
 ```
 

@@ -16,13 +16,58 @@ enum DebugRenderer {
         let loc = PlaceLocation(name: a[1], country: "", countryCode: a[2],
                                 latitude: Double(a[3]) ?? 0, longitude: Double(a[4]) ?? 0, timeZoneID: a[5])
 
-        let app = AppState()
-        if let lang = ProcessInfo.processInfo.environment["PRAYER_RENDER_LANG"] {
-            app.settings.language = lang == "ar" ? .arabic : .english
+        let env = ProcessInfo.processInfo.environment
+        func makeApp(at time: Date?) -> AppState {
+            let app = AppState()
+            if let lang = env["PRAYER_RENDER_LANG"] {
+                app.settings.language = lang == "ar" ? .arabic : .english
+            }
+            app.settings.locationMode = .manual
+            app.settings.manualLocation = loc
+            app.timeOverride = time
+            app.recompute()
+            return app
         }
-        app.settings.locationMode = .manual
-        app.settings.manualLocation = loc
-        app.recompute()
+        func date(_ hhmm: String) -> Date? {
+            var cal = Calendar(identifier: .gregorian); cal.timeZone = loc.timeZone
+            let parts = hhmm.split(separator: ":").compactMap { Int($0) }
+            guard parts.count == 2 else { return nil }
+            return cal.date(bySettingHour: parts[0], minute: parts[1], second: 0, of: Date())
+        }
+        if let list = env["PRAYER_RENDER_AT"] {
+            let times = list.split(separator: ",").compactMap { date(String($0)) }
+            let states: [(AppState, NotchUIState)] = times.map { t in
+                let ui = NotchUIState()
+                ui.notchSize = NSScreen.builtInWithNotch?.notchSize ?? CGSize(width: 200, height: 32)
+                ui.isExpanded = true
+                return (makeApp(at: t), ui)
+            }
+            let size = NotchController.expandedSize
+            let canvas = CGSize(width: size.width + 80, height: (size.height + 24) * CGFloat(states.count) + 24)
+            let view = VStack(spacing: 24) {
+                ForEach(0..<states.count, id: \.self) { i in
+                    NotchRootView().environmentObject(states[i].0).environmentObject(states[i].1)
+                        .frame(width: size.width + 80, height: size.height)
+                }
+            }
+            .padding(.vertical, 12)
+            .frame(width: canvas.width, height: canvas.height)
+            .background(LinearGradient(colors: [Color(white: 0.92), Color(white: 0.82)], startPoint: .top, endPoint: .bottom))
+            .transaction { $0.animation = nil }
+            let renderer = ImageRenderer(content: view)
+            renderer.scale = 2
+            if let cg = renderer.cgImage {
+                let url = outDir.appendingPathComponent("notch-palettes.png")
+                if let dest = CGImageDestinationCreateWithURL(url as CFURL, UTType.png.identifier as CFString, 1, nil) {
+                    CGImageDestinationAddImage(dest, cg, nil)
+                    CGImageDestinationFinalize(dest)
+                    print("wrote \(url.path)")
+                }
+            }
+            return
+        }
+
+        let app = makeApp(at: nil)
 
         let ui = NotchUIState()
         ui.notchSize = NSScreen.builtInWithNotch?.notchSize ?? CGSize(width: 200, height: 32)

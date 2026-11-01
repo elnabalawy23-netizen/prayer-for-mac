@@ -22,6 +22,8 @@ final class AppState: ObservableObject {
     @Published private(set) var locationFailure: LocationService.Failure?
 
     var openSettings: (() -> Void)?
+    /// Fixed "now" for previews (DebugRenderer); nil in normal use.
+    var timeOverride: Date? { didSet { now = timeOverride ?? Date(); recompute() } }
 
     private let locationService = LocationService()
     private var timer: Timer?
@@ -83,10 +85,11 @@ final class AppState: ObservableObject {
 
     func recompute() {
         guard let loc = location else { snapshot = nil; return }
-        snapshot = PrayerEngine.snapshot(at: Date(), settings: settings, location: loc)
+        snapshot = PrayerEngine.snapshot(at: timeOverride ?? Date(), settings: settings, location: loc)
     }
 
     private func tick() {
+        if timeOverride != nil { return }
         now = Date()
         if let s = snapshot, now >= s.validUntil { recompute() }
     }
