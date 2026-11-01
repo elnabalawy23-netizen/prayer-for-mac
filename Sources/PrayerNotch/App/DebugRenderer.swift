@@ -4,6 +4,7 @@ import UniformTypeIdentifiers
 
 /// `Prayer --render <outDir> <name> <countryCode> <lat> <lon> <tz>` renders the collapsed and
 /// expanded notch views to PNG files so the design can be reviewed without screen capture.
+/// `PRAYER_RENDER_ISLAND=1` renders the virtual island used on Macs without a notch.
 enum DebugRenderer {
     @MainActor
     static func run(arguments: [String]) {
@@ -34,11 +35,22 @@ enum DebugRenderer {
             guard parts.count == 2 else { return nil }
             return cal.date(bySettingHour: parts[0], minute: parts[1], second: 0, of: Date())
         }
+        let island = env["PRAYER_RENDER_ISLAND"] != nil
+        func makeUI() -> NotchUIState {
+            let ui = NotchUIState()
+            if island {
+                ui.notchSize = CGSize(width: 0, height: NotchLayout.virtualHeight)
+                ui.isVirtual = true
+            } else {
+                ui.notchSize = NSScreen.builtInWithNotch?.notchSize ?? CGSize(width: 200, height: 32)
+            }
+            return ui
+        }
+        let prefix = island ? "island" : "notch"
         if let list = env["PRAYER_RENDER_AT"] {
             let times = list.split(separator: ",").compactMap { date(String($0)) }
             let states: [(AppState, NotchUIState)] = times.map { t in
-                let ui = NotchUIState()
-                ui.notchSize = NSScreen.builtInWithNotch?.notchSize ?? CGSize(width: 200, height: 32)
+                let ui = makeUI()
                 ui.isExpanded = true
                 return (makeApp(at: t), ui)
             }
@@ -57,7 +69,7 @@ enum DebugRenderer {
             let renderer = ImageRenderer(content: view)
             renderer.scale = 2
             if let cg = renderer.cgImage {
-                let url = outDir.appendingPathComponent("notch-palettes.png")
+                let url = outDir.appendingPathComponent("\(prefix)-palettes.png")
                 if let dest = CGImageDestinationCreateWithURL(url as CFURL, UTType.png.identifier as CFString, 1, nil) {
                     CGImageDestinationAddImage(dest, cg, nil)
                     CGImageDestinationFinalize(dest)
@@ -69,8 +81,7 @@ enum DebugRenderer {
 
         let app = makeApp(at: nil)
 
-        let ui = NotchUIState()
-        ui.notchSize = NSScreen.builtInWithNotch?.notchSize ?? CGSize(width: 200, height: 32)
+        let ui = makeUI()
 
         for expanded in [false, true] {
             ui.isExpanded = expanded
@@ -86,7 +97,7 @@ enum DebugRenderer {
             let renderer = ImageRenderer(content: view)
             renderer.scale = 2
             guard let cg = renderer.cgImage else { print("render failed"); continue }
-            let url = outDir.appendingPathComponent(expanded ? "notch-expanded.png" : "notch-collapsed.png")
+            let url = outDir.appendingPathComponent(expanded ? "\(prefix)-expanded.png" : "\(prefix)-collapsed.png")
             if let dest = CGImageDestinationCreateWithURL(url as CFURL, UTType.png.identifier as CFString, 1, nil) {
                 CGImageDestinationAddImage(dest, cg, nil)
                 CGImageDestinationFinalize(dest)

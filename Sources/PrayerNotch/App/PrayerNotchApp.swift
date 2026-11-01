@@ -70,11 +70,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         applyStatusItemVisibility()
     }
 
-    /// Nothing lives outside the notch on notch Macs unless the user opts in;
-    /// Macs without a notch keep the text item as their only UI.
+    /// The island (hardware notch or virtual) is the UI; the menu-bar icon is opt-in.
+    /// Only when no island could be created at all does the text item take over.
     private func applyStatusItemVisibility() {
-        let hasNotch = notch != nil
-        statusItem.showsText = !hasNotch
-        statusItem.isVisible = !hasNotch || state.settings.showMenuBarIcon
+        let hasIsland = notch != nil
+        statusItem.showsText = !hasIsland
+        statusItem.isVisible = !hasIsland || state.settings.showMenuBarIcon
     }
 }

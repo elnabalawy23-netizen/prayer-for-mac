@@ -146,10 +146,8 @@ struct SettingsView: View {
 
     private var generalSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            if NSScreen.builtInWithNotch != nil {
-                row(s.showMenuBarIcon) {
-                    Toggle("", isOn: $app.settings.showMenuBarIcon).toggleStyle(.switch).labelsHidden()
-                }
+            row(s.showMenuBarIcon) {
+                Toggle("", isOn: $app.settings.showMenuBarIcon).toggleStyle(.switch).labelsHidden()
             }
             row(s.launchAtLogin) {
                 Toggle("", isOn: Binding(

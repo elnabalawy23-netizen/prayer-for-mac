@@ -1,7 +1,8 @@
 import AppKit
 import Combine
 
-/// Menu-bar item: the fallback UI on Macs without a notch, and the home of Settings / Quit.
+/// Menu-bar item: optional on every Mac, the home of Settings / Quit, and the text fallback
+/// only if no island could be created at all.
 @MainActor
 final class StatusItemController {
     private let app: AppState
@@ -9,7 +10,7 @@ final class StatusItemController {
     private var cancellable: AnyCancellable?
     private let openSettings: () -> Void
     private let togglePanel: () -> Void
-    /// When true (no notch) the item also shows the next prayer and countdown as text.
+    /// When true (no island at all) the item also shows the next prayer and countdown as text.
     var showsText = false { didSet { refresh() } }
     var isVisible: Bool {
         get { item.isVisible }

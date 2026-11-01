@@ -1,12 +1,13 @@
 # Prayer
 
-مواقيت الصلاة على نوتش الماك بوك. الصلاة القادمة والعدّاد بجانب النوتش، ولوحة بتفتح عند تمرير الماوس فيها تايم لاين اليوم كله. المواقيت بتتحسب محليًا بمحرك Adhan، والطريقة بتتحدد تلقائيًا حسب الدولة (أم القرى للسعودية، الهيئة المصرية لمصر...) وبتوقيت المدينة المختارة.
+مواقيت الصلاة على نوتش الماك بوك. الصلاة القادمة والعدّاد بجانب النوتش، ولوحة بتفتح عند تمرير الماوس فيها تايم لاين اليوم كله. والأجهزة اللي من غير نوتش (ماك بوك إير، آي ماك، شاشة خارجية) بتاخد نفس الجزيرة بنفس الديزاين في أعلى الشاشة. المواقيت بتتحسب محليًا بمحرك Adhan، والطريقة بتتحدد تلقائيًا حسب الدولة (أم القرى للسعودية، الهيئة المصرية لمصر...) وبتوقيت المدينة المختارة.
 
-A macOS app that turns the MacBook notch into a prayer-times island: the next prayer and a live countdown sit beside the notch, and hovering opens a panel with the day's timeline. Times are computed on-device with the [Adhan](https://github.com/batoulapps/adhan-swift) engine, the calculation method is picked automatically per country (Umm al-Qura for Saudi Arabia, Egyptian General Authority for Egypt, ...), and everything is shown in the chosen city's time zone.
+A macOS app that turns the MacBook notch into a prayer-times island: the next prayer and a live countdown sit beside the notch, and hovering opens a panel with the day's timeline. Macs without a notch (MacBook Air, iMac, external displays) get the same island as a virtual notch at the top of the main display. Times are computed on-device with the [Adhan](https://github.com/batoulapps/adhan-swift) engine, the calculation method is picked automatically per country (Umm al-Qura for Saudi Arabia, Egyptian General Authority for Egypt, ...), and everything is shown in the chosen city's time zone.
 
 <p align="center"><img src="docs/notch-expanded.png" width="620" alt="Prayer notch panel, expanded"></p>
 <p align="center"><img src="docs/notch-collapsed.png" width="440" alt="Prayer notch strip, collapsed"></p>
 <p align="center"><img src="docs/notch-palettes.png" width="500" alt="One glow per prayer"></p>
+<p align="center"><img src="docs/island-collapsed.png" width="260" alt="The virtual island on a Mac without a notch"></p>
 
 ## Install on any Mac
 
@@ -14,7 +15,7 @@ A macOS app that turns the MacBook notch into a prayer-times island: the next pr
 curl -fsSL https://raw.githubusercontent.com/elnabalawy23-netizen/prayer-for-mac/main/install.sh | bash
 ```
 
-The script downloads the latest release, puts it in /Applications, clears the quarantine flag, and launches the app. Hover the notch to open the panel; click it to pin it open; `···` opens Settings.
+The script downloads the latest release, puts it in /Applications, clears the quarantine flag, and launches the app. Hover the notch (or the island on a Mac without one) to open the panel; click it to pin it open; `···` opens Settings.
 
 **Manual download instead:** grab `Prayer-<version>.zip` from the [latest release](https://github.com/elnabalawy23-netizen/prayer-for-mac/releases/latest), unzip, drag `Prayer.app` into Applications and open it. macOS blocks the first launch because the app is signed with a local certificate rather than an Apple Developer ID: open System Settings → Privacy & Security, scroll down and click **Open Anyway** (or run `xattr -dr com.apple.quarantine /Applications/Prayer.app`), then open it again. Once per Mac.
 
@@ -27,13 +28,13 @@ First launch asks for Location access so it can pick your city; you can instead 
 - A different glow for every prayer: indigo before Fajr, gold before Dhuhr, orange before Asr, burnt sienna before Maghrib, plum before Isha
 - Location: automatic (CoreLocation) or any city by name (Apple Maps search), with the city's own time zone and its Arabic/English name
 - Calculation method and Asr madhab chosen per country, both overridable; 12/24-hour; English UI, with Arabic (set in Almarai) as an option
-- Menu-bar fallback on Macs without a notch; the icon is hidden on notch Macs unless you turn it on
+- Macs without a notch get the same design as a virtual island hanging from the top edge of the main display (28 pt, a touch taller than the menu bar); it steps aside on full-screen Spaces. The menu-bar icon is optional on every Mac
 - Launch at login
 - Self-updating: checks GitHub daily (or weekly / never), installs the new release and relaunches; "Check now" in Settings → Updates
 
 ## Requirements
 
-- macOS 14 Sonoma or newer (built and tested on macOS 26.2 Tahoe), MacBook with a notch for the island UI
+- macOS 14 Sonoma or newer (built and tested on macOS 26.2 Tahoe), any Mac: the island sits in the notch when there is one, at the top of the screen otherwise
 - To build: Swift 6 toolchain from Xcode **or** the Command Line Tools (`xcode-select --install`)
 
 ## Build, sign, release
@@ -44,7 +45,7 @@ make app        # builds build/Prayer.app signed with that certificate
 make run        # build + launch from build/
 make install    # build + copy to /Applications + launch
 make release    # build + zip + publish a GitHub release for the version in Packaging/Info.plist
-make render     # renders the notch UI (Arabic + English) to build/render/ for design review
+make render     # renders the notch UI (Arabic + English) and the virtual island to build/render/ for design review
                 # PRAYER_RENDER_AT="02:30,08:00,13:00,16:00,18:00" previews every prayer's glow in one image
 make dev        # swift run, no bundle, for quick iteration
 ```
@@ -62,6 +63,8 @@ PRAYER_UPDATE_CHECK_DELAY=2 /Applications/Prayer.app/Contents/MacOS/Prayer   # c
 ```
 
 Publish a higher version first; the installed copy downloads it, verifies the signature, swaps itself and relaunches. Only on a throwaway copy: `PRAYER_FAKE_VERSION=0.9.0` makes the app believe it is older than the latest release.
+
+`PRAYER_FORCE_ISLAND=1` makes a notch Mac use the virtual island, to try the no-notch layout.
 
 ## Accuracy
 
@@ -87,13 +90,14 @@ Sources/PrayerNotch/
   Core/AppState.swift            Settings, location, snapshot, 1 Hz tick, formatting, typography
   Core/Updater.swift             GitHub Releases self-update with signature verification
   Core/FontLoader.swift          Registers the bundled Almarai family
+  Notch/NotchGeometry.swift      Notch detection; virtual island on Macs without one
   Notch/NotchPanel.swift         Borderless always-on-top panel with shape-only hit testing
   Notch/NotchController.swift    Geometry, mouse tracking, expand/collapse
   Notch/NotchShape.swift         The notch silhouette
   Notch/NotchRootView.swift      Collapsed strip and expanded panel
   Notch/TimelineView.swift       Six-segment day timeline
   Settings/                      Settings window
-  MenuBar/StatusItemController   Menu-bar fallback
+  MenuBar/StatusItemController   Optional menu-bar icon (Settings / Quit)
 Packaging/Info.plist             Bundle metadata and version
 Packaging/make-icon.swift        Draws the app icon with AppKit
 Resources/Fonts/                 Almarai (SIL Open Font License)

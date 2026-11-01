@@ -36,12 +36,13 @@ release:
 dev:
 	swift run PrayerNotch
 
-## Render the notch UI (collapsed + expanded) to PNGs in build/render/{ar,en}
+## Render the notch UI (collapsed + expanded) to PNGs in build/render/{ar,en,island}
 render:
 	swift build
-	mkdir -p build/render/ar build/render/en
+	mkdir -p build/render/ar build/render/en build/render/island
 	PRAYER_RENDER_LANG=ar .build/debug/PrayerNotch --render build/render/ar Riyadh SA 24.7136 46.6753 Asia/Riyadh
 	PRAYER_RENDER_LANG=en .build/debug/PrayerNotch --render build/render/en Riyadh SA 24.7136 46.6753 Asia/Riyadh
+	PRAYER_RENDER_ISLAND=1 PRAYER_RENDER_LANG=en .build/debug/PrayerNotch --render build/render/island Riyadh SA 24.7136 46.6753 Asia/Riyadh
 
 icon:
 	scripts/make-icon.sh

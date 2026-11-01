@@ -6,6 +6,8 @@ final class NotchUIState: ObservableObject {
     @Published var isExpanded = false
     @Published var isPinned = false
     @Published var notchSize = CGSize(width: 200, height: 32)
+    /// True on Macs without a notch: the strip is a self-contained island with no center gap.
+    @Published var isVirtual = false
     /// Physical left / right wing widths beside the notch. Each is sized from its own
     /// content plus an even margin, so the text sits centered in its wing.
     @Published var leftWingWidth: CGFloat = 100
@@ -20,7 +22,7 @@ final class NotchUIState: ObservableObject {
 
     /// Horizontal shift of the collapsed strip that keeps the gap between the wings
     /// exactly over the physical notch when the wings differ in width.
-    var collapsedOffsetX: CGFloat { (rightWingWidth - leftWingWidth) / 2 }
+    var collapsedOffsetX: CGFloat { isVirtual ? 0 : (rightWingWidth - leftWingWidth) / 2 }
 }
 
 /// Owns the notch panel, tracks the mouse and drives expand / collapse.
@@ -32,17 +34,20 @@ final class NotchController {
     let ui = NotchUIState()
     private let app: AppState
     private let panel: NotchPanel
-    private let screen: NSScreen
+    private let layout: NotchLayout
+    private var screen: NSScreen { layout.screen }
+    var isVirtual: Bool { layout.isVirtual }
     private var monitors: [Any] = []
     private var collapseWork: DispatchWorkItem?
     private var expandWork: DispatchWorkItem?
 
     init?(app: AppState) {
-        guard let screen = NSScreen.builtInWithNotch, let notch = screen.notchSize else { return nil }
+        guard let layout = NotchLayout.current() else { return nil }
         self.app = app
-        self.screen = screen
-        self.ui.notchSize = notch
-        self.panel = NotchPanel(frame: Self.panelFrame(on: screen))
+        self.layout = layout
+        self.ui.notchSize = layout.notchSize
+        self.ui.isVirtual = layout.isVirtual
+        self.panel = NotchPanel(frame: Self.panelFrame(on: layout.screen), overFullScreen: !layout.isVirtual)
 
         let root = NotchRootView().environmentObject(app).environmentObject(ui)
         let host = NotchHostingView(rootView: root)
@@ -54,15 +59,17 @@ final class NotchController {
         ui.onTap = { [weak self] in self?.togglePinned() }
         panel.orderFrontRegardless()
         installMonitors()
-        NSLog("[notch] screen=%@ notch=%@ panel=%@ collapsed=%@", NSStringFromRect(screen.frame), NSStringFromSize(notch), NSStringFromRect(panel.frame), NSStringFromRect(shapeRectOnScreen(expanded: false)))
+        NSLog("[notch] %@ screen=%@ notch=%@ panel=%@ collapsed=%@", layout.isVirtual ? "virtual island" : "hardware notch", NSStringFromRect(screen.frame), NSStringFromSize(layout.notchSize), NSStringFromRect(panel.frame), NSStringFromRect(shapeRectOnScreen(expanded: false)))
     }
 
+    /// Still the right home after a display change (same screen, same kind of island)?
     var isValidForCurrentScreens: Bool {
-        NSScreen.screens.contains(screen) && screen.notchSize != nil
+        guard let now = NotchLayout.current() else { return false }
+        return now.matches(layout)
     }
 
     func relayout() {
-        if let notch = screen.notchSize { ui.notchSize = notch }
+        if let now = NotchLayout.current(), now.matches(layout) { ui.notchSize = now.notchSize }
         panel.setFrame(Self.panelFrame(on: screen), display: true)
     }
 
