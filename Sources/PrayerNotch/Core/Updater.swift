@@ -225,7 +225,9 @@ final class Updater: ObservableObject {
     private func relaunch(_ bundleURL: URL) {
         let task = Process()
         task.executableURL = URL(fileURLWithPath: "/bin/sh")
-        task.arguments = ["-c", "sleep 1; /usr/bin/open \"$0\"", bundleURL.path]
+        // env -i: the new process must not inherit this one's environment (e.g. PRAYER_FAKE_VERSION),
+        // otherwise a debugging override could make it update itself again on every launch.
+        task.arguments = ["-c", "sleep 1; /usr/bin/env -i /usr/bin/open \"$0\"", bundleURL.path]
         try? task.run()
         NSApp.terminate(nil)
     }
