@@ -28,6 +28,20 @@ struct Palette: Equatable {
     static let idle = Palette(glow: hex(0x5A4A3A), deep: hex(0x1A1512), accent: hex(0xD8C8B8))
 }
 
+extension Prayer {
+    /// SF Symbol for each prayer's moment of the day.
+    var symbolName: String {
+        switch self {
+        case .fajr:    return "sun.horizon"
+        case .sunrise: return "sunrise"
+        case .dhuhr:   return "sun.max"
+        case .asr:     return "sun.min"
+        case .maghrib: return "sunset"
+        case .isha:    return "moon.stars"
+        }
+    }
+}
+
 struct Hairline: View {
     var opacity: Double = 0.10
     var body: some View {

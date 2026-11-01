@@ -22,10 +22,10 @@ First launch asks for Location access so it can pick your city; you can instead 
 ## Features
 
 - Notch strip: next prayer with a glowing dot on the left, `HH:MM` countdown on the right; each wing sized to its text and centered, nothing else outside the notch
-- Hover panel: big prayer name, time, "in 1h 39min", city · method · date, and a six-segment timeline (Fajr → Sunrise → Dhuhr → Asr → Maghrib → Isha → Fajr) with a live fill
+- Hover panel: big prayer name, time, "in 1h 39min", city · method · date, and a six-segment timeline (Fajr → Sunrise → Dhuhr → Asr → Maghrib → Isha → Fajr) with an icon per prayer and a live fill
 - Warm glow that follows the time of day: indigo before Fajr, amber at Dhuhr, burnt sienna at Maghrib, dusk red before Isha
 - Location: automatic (CoreLocation) or any city by name (Apple Maps search), with the city's own time zone and its Arabic/English name
-- Calculation method and Asr madhab chosen per country, both overridable; 12/24-hour; Arabic (Almarai font) or English UI
+- Calculation method and Asr madhab chosen per country, both overridable; 12/24-hour; English UI, with Arabic (set in Almarai) as an option
 - Menu-bar fallback on Macs without a notch; the icon is hidden on notch Macs unless you turn it on
 - Launch at login
 - Self-updating: checks GitHub daily (or weekly / never), installs the new release and relaunches; "Check now" in Settings → Updates

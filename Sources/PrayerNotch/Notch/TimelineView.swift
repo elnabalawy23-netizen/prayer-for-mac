@@ -38,6 +38,14 @@ private struct SegmentView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 9) {
+            Image(systemName: segment.start.prayer.symbolName)
+                .font(.system(size: 13, weight: .light))
+                .symbolRenderingMode(.monochrome)
+                .foregroundStyle(isNext ? palette.accent : .white)
+                .opacity(isNext ? 1 : labelOpacity)
+                .frame(height: 16)
+                .padding(.bottom, 1)
+
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
                     Capsule().fill(Color.white.opacity(isPast ? 0.72 : 0.14))

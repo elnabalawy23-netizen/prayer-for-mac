@@ -26,7 +26,7 @@ final class NotchUIState: ObservableObject {
 /// Owns the notch panel, tracks the mouse and drives expand / collapse.
 @MainActor
 final class NotchController {
-    static let expandedSize = CGSize(width: 540, height: 210)
+    static let expandedSize = CGSize(width: 540, height: 222)
     private static let margin: CGFloat = 24
 
     let ui = NotchUIState()

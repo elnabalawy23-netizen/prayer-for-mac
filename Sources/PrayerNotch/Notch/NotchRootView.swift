@@ -198,10 +198,8 @@ private struct ExpandedBody: View {
                 .caption(9.5, opacity: 0.45)
                 .padding(.top, 6)
 
-                Hairline().padding(.top, 16)
-
                 TimelineView(snapshot: s, palette: palette)
-                    .padding(.top, 16)
+                    .padding(.top, 20)
             } else {
                 EmptyLocationView()
             }

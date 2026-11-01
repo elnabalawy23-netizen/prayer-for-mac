@@ -50,7 +50,7 @@ struct AppSettings: Codable, Equatable {
     /// nil = pick automatically from the location's country.
     var madhabOverride: Madhab? = nil
     var timeFormat: TimeFormat = .system
-    var language: AppLanguage = .arabic
+    var language: AppLanguage = .english
     var launchAtLogin: Bool = false
     /// How often to look for a new release on GitHub (0 = never).
     var updateCheckDays: Int = 1
@@ -71,14 +71,14 @@ struct AppSettings: Codable, Equatable {
         methodOverride = try c.decodeIfPresent(CalculationMethod.self, forKey: .methodOverride)
         madhabOverride = try c.decodeIfPresent(Madhab.self, forKey: .madhabOverride)
         timeFormat = try c.decodeIfPresent(TimeFormat.self, forKey: .timeFormat) ?? .system
-        language = try c.decodeIfPresent(AppLanguage.self, forKey: .language) ?? .arabic
+        language = try c.decodeIfPresent(AppLanguage.self, forKey: .language) ?? .english
         launchAtLogin = try c.decodeIfPresent(Bool.self, forKey: .launchAtLogin) ?? false
         showMenuBarIcon = try c.decodeIfPresent(Bool.self, forKey: .showMenuBarIcon) ?? false
         updateCheckDays = try c.decodeIfPresent(Int.self, forKey: .updateCheckDays) ?? 1
         autoInstallUpdates = try c.decodeIfPresent(Bool.self, forKey: .autoInstallUpdates) ?? true
     }
 
-    static let storageKey = "prayernotch.settings.v2"
+    static let storageKey = "prayernotch.settings.v3"
 
     static func load() -> AppSettings {
         guard let data = UserDefaults.standard.data(forKey: storageKey),
